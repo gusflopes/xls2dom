@@ -7,7 +7,7 @@ export const generateId = async (input: Lancamentos[]) => {
       ...i,
     }
   })
-  console.log(output);
+  // console.log(output);
   return output
 }
 

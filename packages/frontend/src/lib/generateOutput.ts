@@ -7,7 +7,7 @@ export const generateOutput = async (data: Lancamentos[], cnpj: string, user:str
 
     output += `|6000|X||||\n`;
     output += `|6100|${data}|${debito}|${credito}|${valor}||${historico}|${user}||\n`;
-    // return
+    return 'ok'
   })
 
   return output;

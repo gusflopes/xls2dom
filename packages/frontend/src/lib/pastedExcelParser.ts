@@ -32,9 +32,11 @@ lines.map(line => {
   const result:{[key:string]: string} = {};
   input.map((value, index) => {
     result[columns[index]] = value;
+    return result;
   });
   
   data.push(result);
+  return 'ok'
   // console.log('result', result);
 });
 
