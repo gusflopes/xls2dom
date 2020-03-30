@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {Container, Col, Row, FormGroup, FormControl, FormLabel, FormText, Button, FormFile} from 'react-bootstrap';
-import { xls2dom, generateOutput } from './lamba';
-import {importExcel} from './handleFile';
+import { xls2dom } from './lib/pastedExcelParser';
+import { generateOutput } from './lib/generateOutput'
+import {importExcel} from './lib/handleFile';
 import Dropzone from 'react-dropzone';
-// import { toast } from 'toastify';
-import { exampleData } from './_example';
-import XLSX from 'xlsx';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-interface Lancamentos {
-  id?: string,
-  data: string,
-  debito: string,
-  credito: string,
-  valor: string,
-  historico: string,
-}
+
 
 function App() {
   
@@ -25,41 +18,40 @@ function App() {
   const [imported, setImported] = useState<any[]>();
 
   async function handleFile(file: any) {
-    console.log(file[0])
     const newFile = file[0]
     if (newFile.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-      return alert('Formato não suportado. Tente copiar os dados para a planilha exemplo.');
+      return toast.error('Formato não suportado. Utilize a planilha exemplo ou o formulário.');
     }
     setFile(newFile);
-    const reader = new FileReader()
-    reader.onabort = () => console.log('file reading was aborted');
-    reader.onerror = () => console.log('file reading has failed');
-    reader.onload = async (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array'})
-
-      console.log(workbook);
-    }
-    reader.readAsArrayBuffer(newFile);
+    const response: Lancamentos[] = await importExcel(newFile);
+    console.log('final', response);
+    return setImported(response)
   }
 
   async function handleSubmit() {
     // testing(cnpj, user, lancamentos)
-    if (!lancamentos && !file) return alert('Você deve importar um arquivo ou preencher o campo Lançamentos Contábeis.')
+    if (!lancamentos && !file) return toast.error('Você deve importar um arquivo ou preencher o campo Lançamentos Contábeis.')
     if (lancamentos) {
-      const response: Lancamentos[] = await xls2dom(lancamentos);
-      return setImported(response);
+      try {
+        const response: Lancamentos[] = await xls2dom(lancamentos);
+        const {id, data, valor, debito, credito, historico} = response[0]
+        // if (!id || !data || !valor || !debito || !credito || !historico) throw new Error('testando!')
+        return setImported(response);
+      } catch (err) {
+        toast.error('Erro na importação: Você deve colar a planilha no formulário ou importar o arquivo.')
+        console.log(err);
+      }
     }
     if (file) {
-      return alert('Importação de XLS desabilitada. Copie o conteúdo da planilha para o campo Lançamentos Contábeis.')
+      return toast.error('Importação de XLS desabilitada. Copie o conteúdo da planilha para o campo Lançamentos Contábeis.')
     }
   }
 
   async function handleExport() {
     if (!file) console.log('Não foram importados arquivos...')
-    if (!imported) return alert('Você deve importar os dados primeiro!')
+    if (!imported) return toast.error('Você deve importar os dados primeiro!')
 
-      if (!cnpj || !user) return alert('Campos Usuário e CNPJ são obrigatórios')
+      if (!cnpj || !user) return toast.error('Campos Usuário e CNPJ são obrigatórios')
       // if (imported && cnpj && user) {
 
         const outputContent = await generateOutput(imported, cnpj, user);
@@ -75,7 +67,7 @@ function App() {
         
         document.body.removeChild(element);
         
-        return alert('Deu certo?');
+        return toast.success('Deu certo?');
       // }
   }
 
@@ -86,6 +78,7 @@ function App() {
 
   return (
     <Container className="App">
+      <ToastContainer autoClose={3000} />
       <Row className="App-header">
         <h1>Gerando arquivo de importação de lançamentos contábeis do Domínio Sistemas.</h1>
       </Row>
