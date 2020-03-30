@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import {Container, Col, Row, FormGroup, FormControl, FormLabel, FormText, Button, FormFile} from 'react-bootstrap';
+import React, { useState } from 'react';
+import {Container, Col, Row, FormGroup, FormControl, FormLabel, FormText, Button, Navbar} from 'react-bootstrap';
 import { xls2dom } from './lib/pastedExcelParser';
 import { generateOutput } from './lib/generateOutput'
 import {importExcel} from './lib/handleFile';
-import Dropzone from 'react-dropzone';
+// import Dropzone from 'react-dropzone';
+import MyDropZone from './components/DropZone';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
+// import styled from 'styled-components';
 
 function App() {
   
-  const [file, setFile] = useState();
+  const [file, setFile] = useState<File>();
   const [lancamentos, setLancamentos] = useState<string>();
   const [cnpj, setCnpj] = useState<string>();
   const [user, setUser] = useState('');
@@ -24,7 +24,7 @@ function App() {
     }
     setFile(newFile);
     const response: Lancamentos[] = await importExcel(newFile);
-    console.log('final', response);
+    // console.log('final', response);
     return setImported(response)
   }
 
@@ -35,20 +35,20 @@ function App() {
       try {
         const response: Lancamentos[] = await xls2dom(lancamentos);
         const {id, data, valor, debito, credito, historico} = response[0]
-        // if (!id || !data || !valor || !debito || !credito || !historico) throw new Error('testando!')
+        if (!id || !data || !valor || !debito || !credito || !historico) throw new Error('testando!')
         return setImported(response);
       } catch (err) {
         toast.error('Erro na importação: Você deve colar a planilha no formulário ou importar o arquivo.')
-        console.log(err);
+        // console.log(err);
       }
     }
     if (file) {
-      return toast.error('Importação de XLS desabilitada. Copie o conteúdo da planilha para o campo Lançamentos Contábeis.')
+      return toast.error('Arquivo xlsx já importado. Clique em exportar.')
     }
   }
 
   async function handleExport() {
-    if (!file) console.log('Não foram importados arquivos...')
+    // if (!file) console.log('Não foram importados arquivos...')
     if (!imported) return toast.error('Você deve importar os dados primeiro!')
 
       if (!cnpj || !user) return toast.error('Campos Usuário e CNPJ são obrigatórios')
@@ -71,79 +71,68 @@ function App() {
       // }
   }
 
-  useEffect(() => {
-    console.log('Agora tem importado')
-    console.log(imported);
-  }, [imported]);
-
   return (
-    <Container className="App">
+    <Container id="home" className="App">
       <ToastContainer autoClose={3000} />
-      <Row className="App-header">
-        <h1>Gerando arquivo de importação de lançamentos contábeis do Domínio Sistemas.</h1>
+      <Navbar bg="dark" variant="dark">
+        <Navbar.Brand href="#home">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" width="30" height="30" className="d-inline-block-allign-top" alt="React logo"  />
+          {' '}
+          CTools: Lançamentos Contábeis
+        </Navbar.Brand>
+      </Navbar>
+      <Row style={{marginTop: '15px'}}>
+        <Col lg={6} md={6} sm={12} xs={12} >
+          <FormGroup controlId="formCnpj">
+            <FormLabel>CNPJ</FormLabel>
+            <FormControl type="text" placeholder="Digite CNPJ da empresa" value={cnpj} onChange={(e: React.FormEvent<HTMLInputElement>) => setCnpj(e.currentTarget.value)} />
+            <FormText>Digite apenas números.</FormText>
+          </FormGroup>
+          <FormGroup controlId="usuario">
+            <FormLabel>Usuário</FormLabel>
+            <FormControl type="text" placeholder="Digite o Usuário Domínio Sistemas" value={user} onChange={(e: React.FormEvent<HTMLInputElement>) => setUser(e.currentTarget.value)}  />
+            <FormText>Nome do Usuário que constará no arquivo de importação.</FormText>
+          </FormGroup>
+          <FormGroup controlId="lancamentos">
+            <FormLabel>Lançamentos Contábeis</FormLabel>
+            <FormControl
+              as="textarea"
+              rows="4"
+              value={lancamentos}
+              onChange={(e: React.FormEvent<HTMLInputElement>) => setLancamentos(e.currentTarget.value)}
+              placeholder="Anexe uma planilha do Excel ou cole aqui sua tabela de lançamentos contábeis"
+            />
+          </FormGroup>
+        </Col>
+        <Col lg={6} md={6} sm={12} xs={12} >
+          <MyDropZone file={file} handleFile={handleFile} />
+        </Col>
       </Row>
-
-      <form>
-        <Row>
-          <Col>
-            <FormGroup controlId="formCnpj">
-              <FormLabel>CNPJ</FormLabel>
-              <FormControl type="text" placeholder="Digite CNPJ da empresa" value={cnpj} onChange={(e: React.FormEvent<HTMLInputElement>) => setCnpj(e.currentTarget.value)} />
-              <FormText>Digite apenas números.</FormText>
-            </FormGroup>
-            <FormGroup controlId="usuario">
-              <FormLabel>Usuário</FormLabel>
-              <FormControl type="text" placeholder="Digite o Usuário Domínio Sistemas" value={user} onChange={(e: React.FormEvent<HTMLInputElement>) => setUser(e.currentTarget.value)}  />
-              <FormText>Nome do Usuário que constará no arquivo de importação.</FormText>
-            </FormGroup>
-            <FormGroup>
-              <FormLabel>Lançamentos Contábeis</FormLabel>
-              <FormControl
-                as="textarea"
-                rows="4"
-                value={lancamentos}
-                onChange={(e: React.FormEvent<HTMLInputElement>) => setLancamentos(e.currentTarget.value)}
-                placeholder="Anexe uma planilha do Excel ou cole aqui sua tabela de lançamentos contábeis"
-              />
-            </FormGroup>
-          </Col>
-          <Col>
-            <a href="/example.xlsx"><span>Download Planilha Modelo</span></a>
-            <FormFile id="file-upload" label="Enviar seu arquivo"  onChange={handleFile} />
-            <Dropzone onDrop={acceptedFiles => handleFile(acceptedFiles)}>
-              {({getRootProps, getInputProps}) => (
-                <section>
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    <p>Drag 'n' drop some files here, or click to select files</p>
-                  </div>
-                </section>
-              )}
-            </Dropzone>
-          </Col>
-        </Row>
-          <Col lg={6} style={{display: 'flex', justifyContent: 'space-between'}}>
-          <Button onClick={handleSubmit}>Importar</Button>
-          <Button onClick={() => console.log(file)}>File</Button>
-          <Button onClick={handleExport}>Exportar</Button>
-          </Col>
-          <Col />
-      </form>
-      <Row>
+      <Row style={{marginTop: '15px', justifyContent: 'center'}} >
+        <Col xs={6} sm={6} md={6} lg={6} style={{display: 'flex', justifyContent: 'center'}}>
+          <Button variant="outline-primary" size="lg" style={{margin: '0 30px'}} onClick={handleSubmit}>Carregar</Button>
+          <Button variant="success" size="lg" style={{margin: '0 30px'}} onClick={handleExport}>Exportar</Button>
+        </Col>
+        <Col xs={6} sm={6} md={6} lg={6}>
+          <a href="/example.xlsx"><span style={{display: 'block', textAlign: 'center', alignSelf: 'center'}}>Download Planilha Modelo</span></a>
+        </Col>
+      </Row>
+      <Row style={{ marginTop: '30px' }} >
+        <Col lg={12}>
         {imported && (
-        <table>
-          <thead>
+        <table className="table table-hover">
+          <thead className="thead-dark">
             <tr>
-              <th>Data</th>
-              <th>Débito</th>
-              <th>Crédito</th>
-              <th>Valor</th>
-              <th>Histórico</th>
+              <th scope="col">Data</th>
+              <th scope="col">Débito</th>
+              <th scope="col">Crédito</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Histórico</th>
             </tr>
           </thead>
           <tbody>
-            {imported.map((i: Lancamentos) => (<tr key={i?.id}>
-              <td>{i?.data}</td>
+            {imported.map((i: Lancamentos) => (<tr key={`lcto-${i?.id}`}>
+              <th scope="row">{i?.data}</th>
               <td>{i?.debito}</td>
               <td>{i?.credito}</td>
               <td>{i?.valor}</td>
@@ -151,6 +140,12 @@ function App() {
             </tr>))}
           </tbody>
         </table>)}
+        </Col>
+      </Row>
+      <Row>
+        <footer style={{marginLeft: 'auto', marginRight: 'auto'}} >
+          <span>Desenvolvido por <a href="https://github.com/gusflopes" target="_blank" rel="noreferrer noopener"><strong>Gustavo Lopes</strong></a> e <a href="http://www.lscont.com.br" target="_blank" rel="noreferrer noopener"><strong>LSCONT</strong></a>. Todos os direitos reservados.</span>
+        </footer>
       </Row>
     </Container>
   );
