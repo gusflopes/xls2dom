@@ -108,7 +108,7 @@ function App() {
             </FormGroup>
           </Col>
           <Col>
-            <a href="/example.xls"><span>Download Planilha Modelo</span></a>
+            <a href="/example.xlsx"><span>Download Planilha Modelo</span></a>
             <FormFile id="file-upload" label="Enviar seu arquivo"  onChange={handleFile} />
             <Dropzone onDrop={acceptedFiles => handleFile(acceptedFiles)}>
               {({getRootProps, getInputProps}) => (
