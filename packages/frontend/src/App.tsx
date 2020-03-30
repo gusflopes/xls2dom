@@ -109,11 +109,11 @@ function App() {
         </Col>
       </Row>
       <Row style={{marginTop: '15px', justifyContent: 'center'}} >
-        <Col xs={6} sm={6} md={6} lg={6} style={{display: 'flex', justifyContent: 'center'}}>
+        <Col xs={12} sm={12} md={6} lg={6} style={{display: 'flex', justifyContent: 'center'}}>
           <Button variant="outline-primary" size="lg" style={{margin: '0 30px'}} onClick={handleSubmit}>Carregar</Button>
           <Button variant="success" size="lg" style={{margin: '0 30px'}} onClick={handleExport}>Exportar</Button>
         </Col>
-        <Col xs={6} sm={6} md={6} lg={6}>
+        <Col xs={12} sm={12} md={6} lg={6}>
           <a href="/example.xlsx"><span style={{display: 'block', textAlign: 'center', alignSelf: 'center'}}>Download Planilha Modelo</span></a>
         </Col>
       </Row>
