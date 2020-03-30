@@ -1,12 +1,6 @@
 import {v4 as uuid} from 'uuid';
-import { format, parseISO, parse } from 'date-fns'
 // const excelToJson = require('convert-excel-to-json');
-import readXlsxFile from 'read-excel-file';
 
-export const testing = (cnpj: String, user: String, lancamentos: String) => {
-  console.log(lancamentos);
-  console.log('cnpj', cnpj, 'user', user);
-}
 interface Lancamentos {
   id?: string,
   data: string,
@@ -14,65 +8,6 @@ interface Lancamentos {
   credito: string,
   valor: string,
   historico: string,
-}
-
-interface ExcelLctos {
-  data: Date,
-  debito: string,
-  credito: string,
-  valor: number,
-  historico: string,
-}
-
-const xlsxSchema: any = {
-  'Data': {
-    prop: 'data',
-    type: Date,
-  },
-  'Debito': {
-    prop: 'debito',
-    type: Number,
-    required: true,
-  },
-  'Credito': {
-    prop: 'credito',
-    type: Number,
-    required: true,
-  },
-  'Valor': {
-    prop: 'valor',
-    type: Number,
-    required: true,
-  },
-  'Historico': {
-    prop: 'historico',
-    type: String,
-    required: true,
-  }
-}
-
-
-export const handleXlsFile = async (file: any) => { 
-  readSpreadsheet(file, xlsxSchema)
-    .then(response => {return response})
-    .then(response => console.log('finalizado', response))
-    
-    // .then((response: any[]) => formatDateCustom(response))
-    // .then((response: Lancamentos[]) => generateId(response))
-    // .then((response: Lancamentos[]) => console.log(response))
-}
-
-export const formatDateCustom = async (input: any[]) => {
-  const output: any[] = input.map(async (i: any) => {
-      const {data} = i;
-      const formattedDate = await format(data, 'dd/MM/YYYY')
-      return {
-        ...i,
-        data: formattedDate,
-      }
-    // }
-  })
-  return output;
 }
 
 export const generateId = async (input: Lancamentos[]) => {
@@ -86,27 +21,11 @@ export const generateId = async (input: Lancamentos[]) => {
   return output
 }
 
-export const testExcel = (file) => { return Promise.all(readSpreadsheet(file, xlsxSchema))}
-
-
-export const readSpreadsheet = async (file: any, schema: any) => {
-  await readXlsxFile(file, { schema })
-  .then((({rows, errors}) => {
-    // errors.length === 0;
-    console.log(rows);
-    return rows;
-  }))
-}
-
 export const xls2dom = async (input: string) => {
   return await pastedExcelParser(input)
     .then((response: Lancamentos[]) => formatNumber(response))
     .then((response:Lancamentos[]) => generateId(response))
 
-}
-
-export const writeFile = async (data: string) => {
-  return console.log('need to be implemented.')
 }
 
 export const generateOutput = async (data: Lancamentos[], cnpj: string, user:string) => {

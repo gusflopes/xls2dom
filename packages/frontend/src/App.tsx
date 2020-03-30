@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {Container, Col, Row, FormGroup, FormControl, FormLabel, FormText, Button, FormFile} from 'react-bootstrap';
-import { handleXlsFile, xls2dom, generateOutput } from './lamba';
+import { xls2dom, generateOutput } from './lamba';
+import {importExcel} from './handleFile';
 import Dropzone from 'react-dropzone';
 // import { toast } from 'toastify';
 import { exampleData } from './_example';
+import XLSX from 'xlsx';
 
 interface Lancamentos {
   id?: string,
@@ -32,13 +34,13 @@ function App() {
     const reader = new FileReader()
     reader.onabort = () => console.log('file reading was aborted');
     reader.onerror = () => console.log('file reading has failed');
-    reader.onloadend = async () => {
-      const binaryStr = reader.result;
-      // console.log(binaryStr);
-      const response = await handleXlsFile(binaryStr);
-      console.log('working', response);
+    reader.onload = async (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array'})
+
+      console.log(workbook);
     }
-    reader.readAsBinaryString(newFile);
+    reader.readAsArrayBuffer(newFile);
   }
 
   async function handleSubmit() {
