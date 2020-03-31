@@ -21,7 +21,7 @@ const columns: Array<string> = [];
 const data: any[] = [];
 
 for (let i = 0; i < header.length; i++) {
-  columns.push(header[i].toLowerCase())
+  columns.push(header[i].toLowerCase().trim())
 }
 
 lines.map(line => {

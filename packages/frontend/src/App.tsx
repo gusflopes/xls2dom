@@ -27,7 +27,7 @@ function App() {
     }
     setFile(newFile);
     const response: Lancamentos[] = await importExcel(newFile); // voltar  Interface
-    // console.log('final', response);
+    if (process.env.NODE_ENV) console.log('final', response);
     return setImported(response)
   }
 
@@ -42,7 +42,7 @@ function App() {
         return setImported(response);
       } catch (err) {
         toast.error('Erro na importação: Você deve colar a planilha no formulário ou importar o arquivo.')
-        // console.log(err);
+        if (process.env.NODE_ENV) console.log(err);
       }
     }
     if (file) {

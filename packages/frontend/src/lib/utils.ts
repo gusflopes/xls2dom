@@ -11,7 +11,9 @@ export const generateId = async (input: Lancamentos[]) => {
 }
 
 export const formatNumber = async (input: Lancamentos[]) => {
+  // console.log('input', input)
   const output: Lancamentos[] = input.map((i: Lancamentos) => {
+    // console.log(i);
     return {
       ...i,
       valor: i.valor.replace('R$', '').trim()
