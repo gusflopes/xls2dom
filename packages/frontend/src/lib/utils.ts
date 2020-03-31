@@ -19,3 +19,15 @@ export const formatNumber = async (input: Lancamentos[]) => {
   })
   return output
 }
+
+export const formatNumberToLocale = async (input: Lancamentos[]) => {
+  const output: Lancamentos[] = input.map((i: Lancamentos)  => {
+    const {valor} = i;
+
+    return {
+      ...i,
+      valor: valor.match(/(.*?\.)(.*?,\d{2})/gm) ? valor.replace(/\./g, '') : valor
+    }
+  })
+  return output;
+}

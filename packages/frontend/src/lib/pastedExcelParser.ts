@@ -1,8 +1,9 @@
-import { generateId, formatNumber } from './utils'
+import { generateId, formatNumber, formatNumberToLocale } from './utils'
 
 export const xls2dom = async (input: string) => {
   return await pastedExcelParser(input)
     .then((response: Lancamentos[]) => formatNumber(response))
+    .then((response: Lancamentos[]) => formatNumberToLocale(response))
     .then((response:Lancamentos[]) => generateId(response))
 
 }
