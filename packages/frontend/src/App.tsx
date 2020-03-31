@@ -60,7 +60,7 @@ function App() {
         const outputContent = await generateOutput(imported, cnpj, user);
         
         var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=latin1,' + encodeURIComponent(outputContent));
+        element.setAttribute('href', 'data:text/plain;charset=iso-8859-1,' + encodeURIComponent(outputContent));
         element.setAttribute('download', 'output.txt');
         
         element.style.display = 'none';
