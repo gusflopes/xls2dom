@@ -26,7 +26,7 @@ function App() {
       return toast.error('Formato não suportado. Utilize a planilha exemplo ou o formulário.');
     }
     setFile(newFile);
-    const response: Lancamentos[] = await importExcel(newFile);
+    const response: Lancamentos[] = await importExcel(newFile); // voltar  Interface
     // console.log('final', response);
     return setImported(response)
   }

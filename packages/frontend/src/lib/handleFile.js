@@ -1,13 +1,15 @@
 import readXlsxFile from 'read-excel-file';
-import { format} from 'date-fns'
+import { format } from 'date-fns'
 import { generateId } from './utils';
 
 export const importExcel = async (file) => { 
   return await readSpreadsheet(file, xlsxSchema)
     .then((response) => {return formatDateCustom(response)})
-    .then((response) => {return formatNumberValue(response)})
+    //  .then((response) => {return formatNumberValue(response)})
     .then((response) => {return generateId(response)})
+   
 }
+
 
 export const readSpreadsheet = async (file, schema) => {
   return await readXlsxFile(file, { schema })
@@ -30,9 +32,12 @@ export const formatNumberValue = async (input) => {
 
 export const formatDateCustom = async (input) => {
   const output = input.map((i) => {
-    return {
+      // console.log(i.data);
+      const {data} = i;
+      return {
       ...i,
-      data: format(i.data, 'dd/MM/yyyy')
+      // data: data.match(/\d{2}\/\d{2}\/\d{4}/gm) ? data : format(data, 'dd/LL/yyyy')
+      data: typeof data === "string" ? data : format(data, 'dd/LL/yyyy')
     }
   })
   return output;
@@ -41,16 +46,17 @@ export const formatDateCustom = async (input) => {
 const xlsxSchema = {
   'Data': {
     prop: 'data',
-    type: Date,
+    type: String,
+    required: true,
   },
   'Debito': {
     prop: 'debito',
-    type: Number,
-    required: true,
+    type: String || Number,
+    // required: true,
   },
   'Credito': {
     prop: 'credito',
-    type: Number,
+    type: String || Number,
     required: true,
   },
   'Valor': {
