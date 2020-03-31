@@ -4,11 +4,9 @@ import { generateId } from './utils';
 
 export const importExcel = async (file) => { 
   return await readSpreadsheet(file, xlsxSchema)
-    // .then((response: any[]) => {return response})
     .then((response) => {return formatDateCustom(response)})
     .then((response) => {return formatNumberValue(response)})
     .then((response) => {return generateId(response)})
-    // .then(response => { return {response} })
 }
 
 export const readSpreadsheet = async (file, schema) => {

@@ -10,12 +10,9 @@ export const xls2dom = async (input: string) => {
 const pastedExcelParser = async (input: String) => {
 
 const step1: Array<String> = input.split(/\n/);
-// console.log('length', step1[21].length);
-// console.log('line', step1[21]);
 const lines: Array<String> = step1.filter((line) => {
   return line.length > 0;
 })
-// console.log('lines', lines);
 
 const header = lines.splice(0, 1)[0].split(/\t/);
 
@@ -23,7 +20,6 @@ const columns: Array<string> = [];
 const data: any[] = [];
 
 for (let i = 0; i < header.length; i++) {
-  // columns.push(`col${i + 1}`);
   columns.push(header[i].toLowerCase())
 }
 
@@ -37,12 +33,8 @@ lines.map(line => {
   
   data.push(result);
   return 'ok'
-  // console.log('result', result);
 });
 
-// console.log('---');
-// console.log(data);
-// console.log(data.length);
 return data;
 }
 

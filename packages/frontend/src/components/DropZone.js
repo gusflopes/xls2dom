@@ -29,7 +29,7 @@ export const MyDropZone = styled.div`
   ${props =>
     (props.file !== undefined) &&
     css`
-      cursor: not-allowed;
+      cursor: not-allowed !important;
       opacity: 0.7;
       background-color: #5F9EA0 !important;
       span {
@@ -51,7 +51,7 @@ export default function DropZone({file, handleFile, ...props}) {
 
   return (
     <MyDropZone file={file} { ...getRootProps()}>
-      <input {...getInputProps()} />
+      {(file === undefined) && <input {...getInputProps()} />}
       {
         (file !== undefined) ? <span>Arquivo carregado</span> :
         isDragActive ?

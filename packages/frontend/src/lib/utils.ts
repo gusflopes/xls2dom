@@ -7,7 +7,6 @@ export const generateId = async (input: Lancamentos[]) => {
       ...i,
     }
   })
-  // console.log(output);
   return output
 }
 
@@ -18,6 +17,5 @@ export const formatNumber = async (input: Lancamentos[]) => {
       valor: i.valor.replace('R$', '').trim()
     }
   })
-  // console.log(output);
   return output
 }

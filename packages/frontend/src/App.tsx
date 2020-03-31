@@ -17,8 +17,11 @@ function App() {
   const [user, setUser] = useState('');
   const [imported, setImported] = useState<any[]>();
 
-  async function handleFile(file: any) {
-    const newFile = file[0]
+  async function handleFile(inputFile: any) {
+    if (file !== undefined) return toast.error('Arquivo já importado. Para substituir recarregue a página.');
+    // if (file === undefined) console.log('não tem file');
+
+    const newFile = inputFile[0]
     if (newFile.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
       return toast.error('Formato não suportado. Utilize a planilha exemplo ou o formulário.');
     }
@@ -110,7 +113,13 @@ function App() {
       </Row>
       <Row style={{marginTop: '15px', justifyContent: 'center'}} >
         <Col xs={12} sm={12} md={6} lg={6} style={{display: 'flex', justifyContent: 'center'}}>
-          <Button variant="outline-primary" size="lg" style={{margin: '0 30px'}} onClick={handleSubmit}>Carregar</Button>
+          <Button
+            variant={!file ? "outline-primary": "outline-secondary"}
+            disabled={file ? true : false}
+            size="lg"
+            style={ file ? {margin: '0 30px', cursor: 'not-allowed' } : {margin: '0 30px'}}
+            onClick={handleSubmit}
+          >Carregar</Button>
           <Button variant="success" size="lg" style={{margin: '0 30px'}} onClick={handleExport}>Exportar</Button>
         </Col>
         <Col xs={12} sm={12} md={6} lg={6}>
