@@ -9,8 +9,13 @@ export const xls2dom = async (input: string) => {
 
 const pastedExcelParser = async (input: String) => {
 
-const lines: Array<String> = input.split(/\n/);
-// const titulos = lines[0];
+const step1: Array<String> = input.split(/\n/);
+// console.log('length', step1[21].length);
+// console.log('line', step1[21]);
+const lines: Array<String> = step1.filter((line) => {
+  return line.length > 0;
+})
+// console.log('lines', lines);
 
 const header = lines.splice(0, 1)[0].split(/\t/);
 
@@ -21,11 +26,6 @@ for (let i = 0; i < header.length; i++) {
   // columns.push(`col${i + 1}`);
   columns.push(header[i].toLowerCase())
 }
-// console.log('columns', columns);
-
-// let result: {[key: string]: string } = {};
-// console.log('data is empty?', data)
-// console.log('nrLines', lines.length);
 
 lines.map(line => {
   const input = line.split(/\t/);
