@@ -50,6 +50,26 @@ function App() {
     }
   }
 
+  function base64ToArrayBuffer(base64: any) {
+    var binaryString = window.atob(base64);
+    var binaryLen = binaryString.length;
+    var bytes = new Uint8Array(binaryLen);
+    for (var i = 0; i < binaryLen; i++) {
+       var ascii = binaryString.charCodeAt(i);
+       bytes[i] = ascii;
+    }
+    return bytes;
+ }
+
+ function saveByteArray(reportName: any, byte: any) {
+  var blob = new Blob([byte], {type: "text/plain"});
+  var link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  var fileName = reportName;
+  link.download = fileName;
+  link.click();
+};
+
   async function handleExport() {
     // if (!file) console.log('Não foram importados arquivos...')
     if (!imported) return toast.error('Você deve importar os dados primeiro!')
@@ -58,9 +78,20 @@ function App() {
       // if (imported && cnpj && user) {
 
         const outputContent = await generateOutput(imported, cnpj, user);
-        
+
+        // New Solution
+        const  base64Output = btoa(outputContent)
+        const arrayBuffer = base64ToArrayBuffer(base64Output);
+        saveByteArray("output.txt", arrayBuffer);
+        return toast.success('Exportação finalizada.');
+
+        // Old Solution
+        /*
         var element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(outputContent));
+  
+
+
         element.setAttribute('download', 'output.txt');
         
         element.style.display = 'none';
@@ -71,7 +102,8 @@ function App() {
         document.body.removeChild(element);
         
         return toast.success('Deu certo?');
-      // }
+      */
+        // }
   }
 
   return (
